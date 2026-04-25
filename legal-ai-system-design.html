@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Legal Platform — System Design Documents</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0f;
+    --paper: #f5f3ee;
+    --gold: #c9a84c;
+    --gold-light: #e8d4a0;
+    --navy: #1a2744;
+    --navy-mid: #243562;
+    --sage: #4a6741;
+    --sage-light: #dce8da;
+    --crimson: #8b1a2f;
+    --steel: #3d5a73;
+    --steel-light: #d4e4ef;
+    --rule: #c8c4b8;
+    --muted: #6b6860;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(201,168,76,0.08) 59px, rgba(201,168,76,0.08) 60px),
+      repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(201,168,76,0.08) 59px, rgba(201,168,76,0.08) 60px);
+  }
+  .cover-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 6px 20px;
+    margin-bottom: 48px;
+    position: relative;
+  }
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 76px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    max-width: 900px;
+    position: relative;
+  }
+  .cover h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+  .cover-sub {
+    margin-top: 24px;
+    font-size: 17px;
+    color: rgba(255,255,255,0.55);
+    max-width: 560px;
+    position: relative;
+  }
+  .cover-rule {
+    width: 60px; height: 2px;
+    background: var(--gold);
+    margin: 40px auto;
+    position: relative;
+  }
+  .cover-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 1px;
+    position: relative;
+  }
+  .cover-nav {
+    margin-top: 60px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+  }
+  .cover-nav a {
+    text-decoration: none;
+    padding: 14px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.25s;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy);
+  }
+  .btn-primary:hover { background: var(--gold-light); }
+  .btn-secondary {
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── NAV BAR ── */
+  .topnav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    height: 56px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+  .topnav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .topnav-links { display: flex; gap: 32px; }
+  .topnav-links a {
+    font-size: 13px; font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+  .topnav-links a:hover { color: var(--gold); }
+
+  /* ── DOCUMENT SECTIONS ── */
+  .doc-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  .doc-header {
+    border-left: 4px solid var(--gold);
+    padding-left: 28px;
+    margin-bottom: 64px;
+  }
+  .doc-header .doc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .doc-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--navy);
+  }
+  .doc-header .doc-tagline {
+    margin-top: 12px;
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 600px;
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 0 48px;
+  }
+  .doc-separator {
+    background: var(--navy);
+    height: 6px;
+  }
+
+  /* ── OVERVIEW BOX ── */
+  .overview-box {
+    background: var(--navy);
+    color: #fff;
+    padding: 40px 48px;
+    margin-bottom: 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .overview-box::after {
+    content: '';
+    position: absolute; right: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--gold);
+  }
+  .overview-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .overview-box p { color: rgba(255,255,255,0.8); line-height: 1.8; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-title .icon {
+    display: inline-block;
+    width: 28px; height: 28px;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 13px;
+    line-height: 28px;
+    text-align: center;
+    margin-right: 10px;
+    font-style: normal;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 56px;
+  }
+  .card {
+    border: 1px solid var(--rule);
+    padding: 28px;
+    background: #fff;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .card:hover { box-shadow: 0 4px 24px rgba(26,39,68,0.08); border-color: var(--gold); }
+  .card-icon {
+    font-size: 24px; margin-bottom: 14px;
+  }
+  .card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+  .card.accent { background: var(--navy); border-color: var(--navy); }
+  .card.accent h4 { color: var(--gold); }
+  .card.accent p { color: rgba(255,255,255,0.7); }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    margin-bottom: 56px;
+  }
+  .flow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .flow-step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 0 24px;
+    position: relative;
+  }
+  .flow-step:not(:last-child) .step-line {
+    position: absolute;
+    left: 23px; top: 48px; bottom: 0; width: 2px;
+    background: var(--rule);
+  }
+  .step-num {
+    width: 48px; height: 48px;
+    background: var(--navy);
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 16px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative; z-index: 1;
+  }
+  .step-body {
+    padding: 8px 0 40px;
+  }
+  .step-body h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .step-body p { font-size: 14px; color: var(--muted); }
+  .step-body ul { margin-top: 8px; padding-left: 18px; }
+  .step-body ul li { font-size: 14px; color: var(--muted); margin-bottom: 3px; }
+
+  /* ── ARCH TABLE ── */
+  .arch-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 56px;
+    font-size: 14px;
+  }
+  .arch-table th {
+    background: var(--navy);
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 14px 20px;
+    text-align: left;
+    font-weight: 500;
+  }
+  .arch-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--ink);
+  }
+  .arch-table tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+  .arch-table tr:hover td { background: var(--steel-light); }
+  .arch-table td:first-child {
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+  .arch-table td code {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: #eee;
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--crimson);
+  }
+
+  /* ── ROLES TABLE ── */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 56px;
+  }
+  .role-card {
+    border: 1px solid var(--rule);
+    padding: 28px;
+    background: #fff;
+  }
+  .role-card .role-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .role-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .role-card ul { padding-left: 18px; }
+  .role-card ul li { font-size: 14px; color: var(--muted); margin-bottom: 5px; }
+
+  /* ── HIGHLIGHTS / CALLOUTS ── */
+  .callout {
+    padding: 20px 24px;
+    border-left: 3px solid;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .callout.info { border-color: var(--steel); background: var(--steel-light); }
+  .callout.warn { border-color: var(--gold); background: #fdf8ec; }
+  .callout.limit { border-color: var(--crimson); background: #fbeaea; }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .callout.info strong { color: var(--steel); }
+  .callout.warn strong { color: #8a6b00; }
+  .callout.limit strong { color: var(--crimson); }
+
+  /* ── TAG PILLS ── */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 56px; }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 5px 14px;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    background: #fff;
+  }
+  .tag.primary { background: var(--navy); color: var(--gold); border-color: var(--navy); }
+
+  /* ── COMPARISON SECTION ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--rule);
+    margin-bottom: 80px;
+  }
+  .compare-col {
+    background: #fff;
+    padding: 40px 36px;
+  }
+  .compare-col.col-a { border-top: 4px solid var(--steel); }
+  .compare-col.col-b { border-top: 4px solid var(--sage); }
+  .compare-col .col-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .col-a .col-label { color: var(--steel); }
+  .col-b .col-label { color: var(--sage); }
+  .compare-col h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 20px;
+  }
+  .compare-col ul { padding-left: 18px; }
+  .compare-col ul li { font-size: 14px; color: var(--muted); margin-bottom: 7px; line-height: 1.55; }
+
+  /* ── ARCH DIAGRAM SVG-like ── */
+  .arch-diagram {
+    background: var(--navy);
+    padding: 48px;
+    margin-bottom: 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .arch-diagram::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(255,255,255,0.03) 79px, rgba(255,255,255,0.03) 80px);
+  }
+  .arch-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .arch-node {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 14px 20px;
+    min-width: 140px;
+    text-align: center;
+    position: relative;
+  }
+  .arch-node.gold-node { border-color: var(--gold); background: rgba(201,168,76,0.12); }
+  .arch-node.green-node { border-color: #6aad66; background: rgba(106,173,102,0.1); }
+  .arch-node.red-node { border-color: #e07070; background: rgba(224,112,112,0.1); }
+  .arch-node .node-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .arch-node .node-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .arch-node.gold-node .node-name { color: var(--gold); }
+  .arch-node.green-node .node-name { color: #9de09a; }
+  .arch-node.red-node .node-name { color: #e09a9a; }
+  .arch-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.3);
+    font-size: 20px;
+    margin: 4px 0;
+  }
+  .arch-arrow-h {
+    color: rgba(255,255,255,0.3); font-size: 16px;
+    display: flex; align-items: center; padding: 0 4px;
+  }
+  .arch-layer-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 10px;
+    opacity: 0.7;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 48px;
+    font-size: 13px;
+  }
+  footer strong { color: var(--gold); }
+
+  /* ── MISC ── */
+  .mb-56 { margin-bottom: 56px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  @media (max-width: 768px) {
+    .doc-section { padding: 60px 24px; }
+    .roles-grid, .grid-2, .compare-grid { grid-template-columns: 1fr; }
+    .topnav { padding: 0 24px; }
+    .topnav-links { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover" id="top">
+  <div class="cover-badge">Confidential — System Design Documentation</div>
+  <h1>AI Legal Platform<br><em>Architecture & Design</em></h1>
+  <p class="cover-sub">Two distinct product specifications prepared for client review — covering the Document Comparison Tool and the Full Legal Assistant Platform.</p>
+  <div class="cover-rule"></div>
+  <div class="cover-meta">PREPARED APRIL 2026 &nbsp;·&nbsp; VERSION 1.0</div>
+  <div class="cover-nav">
+    <a href="#doc1" class="btn-primary">Product 1 — Document Comparator</a>
+    <a href="#doc2" class="btn-secondary">Product 2 — Legal Assistant Platform</a>
+    <a href="#budget" class="btn-secondary">Project Budgets & Rate Card</a>
+  </div>
+</section>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="#top" class="topnav-brand">LegalAI</a>
+  <div class="topnav-links">
+    <a href="#doc1">Doc Comparator</a>
+    <a href="#doc2">Legal Platform</a>
+    <a href="#compare">Comparison</a>
+    <a href="#budget">Budget & rate card</a>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- DOCUMENT 1 -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="doc1">
+
+  <div class="doc-section">
+    <div class="doc-header">
+      <div class="doc-label">Product 01 — System Design</div>
+      <h2>AI Legal Document<br>Comparison Tool</h2>
+      <p class="doc-tagline">A focused, single-purpose engine that automatically identifies how an uploaded legal document differs from a standard reference template.</p>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="overview-box">
+      <h3>Executive Summary</h3>
+      <p>Legal professionals routinely spend hours manually comparing drafted contracts against standard templates. This product eliminates that friction by automating the comparison pipeline — uploading a document triggers classification, reference matching, and a structured diff report — all within seconds. Think of it as <strong>"Grammarly, but for legal document differences."</strong></p>
+    </div>
+
+    <div class="callout warn" style="margin-bottom: 32px;">
+      <strong>LLM Deployment Decision — Public API vs. Private SLM</strong>
+      All LLM-powered steps in this product (classification, diff reasoning) can be served via a <strong>Public LLM API</strong> (e.g. OpenAI, Anthropic, Google) for lower cost and faster time-to-market, or a <strong>Private / On-Premise Small Language Model (SLM)</strong> (e.g. Mistral, Llama 3, Phi-4 deployed in the client's own infrastructure) for full data sovereignty. Legal documents are sensitive — the right choice depends on the client's confidentiality requirements and IT posture. Both options are architecturally supported.
+    </div>
+    <div class="cards-grid mb-56">
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <h4>1. Document Parsing</h4>
+        <p><strong>MVP:</strong> Successfully parse uploaded PDFs and Word (.docx) files, extracting clean text for analysis.<br><br><strong>Future:</strong> Advanced OCR for scanned documents and handwritten images.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗂️</div>
+        <h4>2. Document Classification & Matching</h4>
+        <p><strong>MVP:</strong> Categorize document type (lease, NDA, sales contract) and match against the closest template in the database.<br><br><strong>Future:</strong> Clause-level search and finer-grained categorization for complex document types.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚖️</div>
+        <h4>3. Difference Generation</h4>
+        <p><strong>MVP:</strong> Identify and highlight "usual markups" — the most common discrepancies between new drafts and standard templates.<br><br><strong>Future:</strong> Advanced analysis for novel clauses and edge-case deviations outside standard patterns.</p>
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div class="section-title"><em class="icon">◈</em> System Architecture</div>
+    <div class="arch-diagram">
+      <div class="arch-layer-label">Presentation Layer</div>
+      <div class="arch-row">
+        <div class="arch-node gold-node"><div class="node-label">Frontend</div><div class="node-name">React Web App</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node gold-node"><div class="node-label">Upload UI</div><div class="node-name">Document Uploader</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node gold-node"><div class="node-label">Output</div><div class="node-name">Diff Report Viewer</div></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer-label">API Gateway / Application Layer</div>
+      <div class="arch-row">
+        <div class="arch-node"><div class="node-label">Backend</div><div class="node-name">Python / Flask</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node"><div class="node-label">Auth</div><div class="node-name">JWT / OAuth</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node"><div class="node-label">API</div><div class="node-name">REST Endpoints</div></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer-label">Document Intelligence Layer</div>
+      <div class="arch-row">
+        <div class="arch-node green-node"><div class="node-label">Parser</div><div class="node-name">PyMuPDF / Docling</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node green-node"><div class="node-label">LLM Agent</div><div class="node-name">GPT-4o / Claude 3.5</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node green-node"><div class="node-label">Diff Agent</div><div class="node-name">LLM-as-Judge Comparator</div></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer-label">Retrieval Layer</div>
+      <div class="arch-row">
+        <div class="arch-node green-node"><div class="node-label">Embeddings</div><div class="node-name">voyage-law-2</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node green-node"><div class="node-label">Graph-RAG</div><div class="node-name">Neo4j Knowledge Graph</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node green-node"><div class="node-label">Reranker</div><div class="node-name">Cohere Rerank</div></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer-label">Data Layer</div>
+      <div class="arch-row">
+        <div class="arch-node red-node"><div class="node-label">Templates DB</div><div class="node-name">PostgreSQL</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node red-node"><div class="node-label">Vector Store</div><div class="node-name">Weaviate</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node red-node"><div class="node-label">File Storage</div><div class="node-name">AWS S3 / Azure Blob</div></div>
+      </div>
+    </div>
+
+    <!-- TECH STACK TABLE -->
+    <div class="section-title"><em class="icon">◈</em> Technology Stack</div>
+    <table class="arch-table mb-56">
+      <thead>
+        <tr><th>Layer</th><th>Technology</th><th>Purpose</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Frontend</td><td>React + TailwindCSS</td><td>Document upload, interactive diff viewer, report UI</td><td>Rich clause-level markup display, responsive</td></tr>
+        <tr><td>Backend</td><td>Python — FastAPI</td><td>Async REST API, agentic pipeline orchestration</td><td>FastAPI preferred for async LLM call handling</td></tr>
+        <tr><td>Document Parsing</td><td><code>Docling</code> (IBM), <code>PyMuPDF</code></td><td>Structure-aware extraction from PDF and Word — preserves headings, clause hierarchy, tables</td><td>Docling outperforms legacy parsers on legal doc layout; Future: multimodal LLM for scanned/handwritten docs</td></tr>
+        <tr><td>Document Classification & Extraction</td><td><strong>Public LLM API</strong> (e.g. OpenAI, Anthropic) <em>or</em> <strong>Private / On-Premise SLM</strong> (e.g. Mistral, Llama 3, Phi-4) with structured JSON output</td><td>Zero-shot document type classification, key party extraction, clause identification — all in a single LLM pass. Public API is faster to deploy; Private SLM keeps all legal data fully on-premise — recommended for data-sensitive clients.</td><td>Choice is driven by data privacy posture: Public API = lower cost, faster iteration. Private SLM = full data sovereignty, no third-party exposure — critical for attorney-client privileged documents.</td></tr>
+        <tr><td>Embeddings</td><td><code>voyage-law-2</code> (Voyage AI)</td><td>Legal-domain-optimised embeddings for clause-level semantic search and template matching</td><td>State-of-the-art for legal semantic retrieval; significantly outperforms general-purpose embedding models on legal benchmarks</td></tr>
+        <tr><td>Knowledge Graph & RAG</td><td>Neo4j + Graph-RAG</td><td>Stores clause relationships, template dependencies, and statutory cross-references as a graph — enabling relational retrieval that flat vector search cannot achieve</td><td>Graph-RAG preserves the inherent relational structure of legal knowledge (clause → statute → precedent); critical for accurate template matching</td></tr>
+        <tr><td>Vector Store</td><td>Weaviate</td><td>Hybrid vector + keyword search over the template corpus</td><td>Native Graph-RAG integration; supports multi-tenancy out of the box</td></tr>
+        <tr><td>Semantic Diff Engine</td><td><strong>LLM-as-Judge</strong> (Public LLM API or Private SLM — same choice as classification layer)</td><td>Clause-by-clause comparison using an LLM to reason about intent-level differences, not just text-level changes</td><td>Catches semantic deviations ("payment within 30 days" vs "payment within 45 days") and missing implied obligations that keyword diff entirely misses</td></tr>
+        <tr><td>Reranking</td><td>Cohere Rerank</td><td>Re-ranks retrieved template clauses by relevance before passing to the diff LLM</td><td>Improves precision of retrieval; reduces hallucination risk by ensuring the LLM sees the most relevant context first</td></tr>
+        <tr><td>Primary Database</td><td>PostgreSQL</td><td>User accounts, document metadata, report history, audit logs</td><td>Row-level security; GDPR-compliant data handling</td></tr>
+        <tr><td>File Storage</td><td>AWS S3 / Azure Blob</td><td>Encrypted document storage with lifecycle management</td><td>Pre-signed URLs; 90-day auto-expiry; versioning enabled</td></tr>
+        <tr><td>Auth</td><td>JWT + OAuth 2.0</td><td>User authentication and role-based access</td><td>SSO-ready; MFA support</td></tr>
+        <tr><td>Infrastructure</td><td>Docker + Kubernetes (EKS / AKS)</td><td>Containerised, auto-scaling deployment</td><td>LLM API calls handled asynchronously via task queue (Celery + Redis) to avoid timeout on large documents</td></tr>
+      </tbody>
+    </table>
+
+    <!-- WORKFLOW -->
+    <div class="section-title"><em class="icon">◈</em> End-to-End Processing Flow</div>
+    <div class="flow mb-56">
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <h4>Document Upload</h4>
+            <p>User authenticates and uploads a legal document (PDF or .docx). File is encrypted at rest and assigned a unique session ID. A virus/malware scan is run on upload.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <h4>Structure-Aware Text Extraction</h4>
+            <p>Docling (IBM's document intelligence library) parses the document with full layout understanding — preserving clause hierarchy, section headings, numbered lists, and table structures. Unlike simple text extractors, this produces a structured clause map, not a flat text dump, which is essential for accurate comparison downstream.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <h4>LLM-Powered Classification & Clause Extraction</h4>
+            <p>A single LLM call — via <strong>Public LLM API</strong> (e.g. OpenAI, Anthropic) or a <strong>Private / On-Premise SLM</strong> (e.g. Mistral, Llama 3, Phi-4) depending on the client's data privacy requirements — simultaneously identifies the document type, extracts key parties and dates, and produces a labelled clause inventory using structured JSON output. This replaces what previously required a separate fine-tuned classifier, an NER model, and a rule-based parser — with higher accuracy and zero training data maintenance.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">04</div>
+          <div class="step-body">
+            <h4>Graph-RAG Template Retrieval</h4>
+            <p>Clause embeddings (via <code>voyage-law-2</code>) are queried against the Neo4j knowledge graph using Graph-RAG. Unlike flat vector search, Graph-RAG traverses relationships — a lease clause can retrieve not just similar lease clauses, but also the statutes those clauses reference and precedent deviations seen in prior documents. Cohere Rerank then re-scores retrieved results before passing them to the comparison step.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">05</div>
+          <div class="step-body">
+            <h4>LLM-as-Judge Semantic Diff</h4>
+            <p>An LLM acting as a reasoning judge (Public API or Private SLM — consistent with the deployment choice made at classification) compares each uploaded clause against its retrieved template counterpart — identifying not just wording changes but intent-level deviations, missing obligations, and risk implications. Each finding is classified by severity (Critical / Advisory / Informational) with a plain-language explanation of why the deviation matters.</p>
+            <ul>
+              <li>Missing clauses (required by template, absent in upload)</li>
+              <li>Modified clauses (semantic intent changed, not just wording)</li>
+              <li>Added clauses (new obligations or rights not in template)</li>
+              <li>Risk-flagged deviations (unusual terms with legal implications)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">06</div>
+          <div class="step-body" style="padding-bottom: 8px;">
+            <h4>Report Generation & Delivery</h4>
+            <p>A structured diff report is generated with highlighted sections, severity ratings (Critical / Advisory / Informational), and suggested corrections. Delivered as an interactive UI view and downloadable PDF/Word report.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESIGN CONSIDERATIONS -->
+    <div class="section-title"><em class="icon">◈</em> Design Considerations</div>
+    <div class="cards-grid mb-56">
+      <div class="card">
+        <div class="card-icon">👁️</div>
+        <h4>Usability</h4>
+        <p>Prioritize clarity for non-technical legal professionals. Clean diff display, tooltip explanations, and plain-language summaries alongside technical details.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h4>Explainability</h4>
+        <p>Each flagged difference includes a brief reasoning statement ("This clause deviates from standard payment terms by adding an early termination penalty"). Builds user trust.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <h4>Security</h4>
+        <p>End-to-end encryption (at rest and in transit). Role-based access control. Audit logging. Compliance with GDPR and relevant data protection regulations.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h4>Scalability</h4>
+        <p>Containerized microservices allow horizontal scaling of the NLP processing layer. Document queue management prevents overload during peak usage.</p>
+      </div>
+    </div>
+
+    <!-- SECURITY & COMPLIANCE -->
+    <div class="section-title"><em class="icon">◈</em> Security & Compliance</div>
+    <table class="arch-table mb-56">
+      <thead><tr><th>Control</th><th>Implementation</th><th>Standard</th></tr></thead>
+      <tbody>
+        <tr><td>Data Encryption</td><td>TLS 1.3 in transit, AES-256 at rest</td><td>GDPR, SOC 2</td></tr>
+        <tr><td>Access Control</td><td>Role-based access (Admin, Reviewer, Viewer)</td><td>Principle of least privilege</td></tr>
+        <tr><td>Audit Logging</td><td>All document access and API calls logged with timestamp and user ID</td><td>SOC 2 Type II</td></tr>
+        <tr><td>Data Retention</td><td>Configurable retention policies; documents purged after defined period</td><td>GDPR Art. 17</td></tr>
+        <tr><td>Infrastructure</td><td>VPC isolation, WAF, DDoS protection via cloud provider</td><td>NIST CSF</td></tr>
+        <tr><td>Compliance Audit</td><td>Quarterly security reviews; penetration testing annually</td><td>GDPR, Industry-specific</td></tr>
+      </tbody>
+    </table>
+
+    <!-- COMMERCIAL MODEL -->
+    <div class="section-title"><em class="icon">◈</em> Commercial Model Considerations</div>
+    <div class="grid-2 mb-56">
+      <div class="callout warn">
+        <strong>Model 1 — Shared Revenue / Pay-as-you-go</strong>
+        Revenue earned only when the tool is actively used. Per-document pricing aligns cost with value delivered. Minimizes upfront risk for client. Well-suited for the initial pilot law firm. Income predictability is lower; requires close usage tracking.
+      </div>
+      <div class="callout info">
+        <strong>Model 2 — SaaS Subscription (Recommended Future)</strong>
+        Fixed monthly/annual fee per firm or per seat. Predictable revenue stream. Encourages deeper adoption. Suitable once the product proves value with the first client and is ready for scale.
+      </div>
+    </div>
+
+    <!-- LIMITATIONS -->
+    <div class="section-title"><em class="icon">◈</em> Known Limitations</div>
+    <div class="callout limit"><strong>Does Not Replace Legal Judgment</strong>This tool identifies differences — it does not provide legal advice. All flagged issues require review by a qualified legal professional.</div>
+    <div class="callout limit"><strong>Template Dependency</strong>Comparison quality is directly tied to the availability and quality of standard templates in the database. Rare document types may return low-confidence matches.</div>
+    <div class="callout limit"><strong>Language Scope</strong>MVP targets English-language documents only. Multi-language support is a future enhancement requiring separate model training.</div>
+
+    <div class="tags">
+      <span class="tag primary">MVP Ready</span>
+      <span class="tag">React + FastAPI</span>
+      <span class="tag">Public LLM API or Private SLM</span>
+      <span class="tag">voyage-law-2 Embeddings</span>
+      <span class="tag">Graph-RAG</span>
+      <span class="tag">Neo4j</span>
+      <span class="tag">Weaviate</span>
+      <span class="tag">LLM-as-Judge Diff</span>
+      <span class="tag">Docling Parser</span>
+      <span class="tag">Cohere Rerank</span>
+      <span class="tag">AWS / Azure</span>
+      <span class="tag">GDPR Compliant</span>
+    </div>
+
+  </div>
+</div>
+
+<div class="doc-separator"></div>
+<hr class="section-divider">
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- DOCUMENT 2 -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="doc2">
+
+  <div class="doc-section">
+    <div class="doc-header">
+      <div class="doc-label">Product 02 — System Design</div>
+      <h2>AI Legal Assistant<br>Platform</h2>
+      <p class="doc-tagline">A full-stack, multi-role ecosystem connecting clients with lawyers — powered by AI-assisted triage, document understanding, draft generation, and lawyer workflow management.</p>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="overview-box">
+      <h3>Executive Summary</h3>
+      <p>Individuals facing legal issues often don't know how to respond to notices, which documents to gather, or how long to wait for professional help. Lawyers, meanwhile, spend disproportionate time on repetitive drafting and triage work. This platform sits between both parties — an AI layer that understands the legal situation, prepares structured summaries and draft responses, routes to a qualified lawyer for review, and delivers a final professional response to the client. Think of it as <strong>"A digital legal assistant + lawyer workflow system."</strong></p>
+    </div>
+
+    <div class="callout warn" style="margin-bottom: 32px;">
+      <strong>LLM Deployment Decision — Public API vs. Private SLM</strong>
+      All LLM agents in this platform (Triage, Research, Drafting) can be configured to use a <strong>Public LLM API</strong> (e.g. OpenAI, Anthropic, Google) or a <strong>Private / On-Premise SLM</strong> (e.g. Mistral, Llama 3, Phi-4) deployed within the client's own secure infrastructure. For a legal platform handling attorney-client privileged communications, Private SLM is strongly recommended — it ensures zero data exposure to third-party model providers. LangGraph's agent orchestration is model-agnostic, making the switch transparent at the pipeline level.
+    </div>
+    <div class="roles-grid mb-56">
+      <div class="role-card">
+        <div class="role-label">Role 01</div>
+        <h4>👤 Client (End User)</h4>
+        <ul>
+          <li>Upload legal notices, contracts, or describe a problem</li>
+          <li>Receive guided prompts for additional information</li>
+          <li>Get a clear, professional response within defined SLA</li>
+          <li>Track case status in real-time</li>
+          <li>No legal knowledge required to use the platform</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="role-label">Role 02</div>
+        <h4>⚖️ Lawyer (Professional)</h4>
+        <ul>
+          <li>Receive pre-triaged cases with AI summaries</li>
+          <li>Review, edit, and approve AI-generated draft responses</li>
+          <li>Query the legal knowledge database via AI assistant</li>
+          <li>Manage caseload from a dedicated dashboard</li>
+          <li>Focus on complex judgment — not repetitive drafting</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="role-label">Role 03</div>
+        <h4>🏛️ Platform Administrator</h4>
+        <ul>
+          <li>Manage lawyer onboarding and verification</li>
+          <li>Monitor SLA compliance and response times</li>
+          <li>Maintain and expand the legal knowledge database</li>
+          <li>Configure routing rules and escalation policies</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="role-label">Role 04</div>
+        <h4>🗄️ Legal Knowledge Database</h4>
+        <ul>
+          <li>Curated repository of legal reference documents</li>
+          <li>Standard templates by jurisdiction and document type</li>
+          <li>Statutory references, case law summaries</li>
+          <li>Continuously updated by admin and legal team</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div class="section-title"><em class="icon">◈</em> System Architecture</div>
+    <div class="arch-diagram">
+      <div class="arch-layer-label">Client Layer</div>
+      <div class="arch-row">
+        <div class="arch-node gold-node"><div class="node-label">Web / Mobile</div><div class="node-name">Client Portal</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node gold-node"><div class="node-label">Dashboard</div><div class="node-name">Lawyer Dashboard</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node gold-node"><div class="node-label">Admin Panel</div><div class="node-name">Admin Console</div></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer-label">API Gateway & Services Layer</div>
+      <div class="arch-row">
+        <div class="arch-node"><div class="node-label">Auth Service</div><div class="node-name">OAuth2 / JWT</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node"><div class="node-label">Case Service</div><div class="node-name">Case Management API</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node"><div class="node-label">Notify Service</div><div class="node-name">Notification Engine</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node"><div class="node-label">Routing</div><div class="node-name">Case Router</div></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer-label">Agentic AI Layer</div>
+      <div class="arch-row">
+        <div class="arch-node green-node"><div class="node-label">Triage Agent</div><div class="node-name">LangGraph Triage</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node green-node"><div class="node-label">Research Agent</div><div class="node-name">Graph-RAG + Neo4j</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node green-node"><div class="node-label">Drafting Agent</div><div class="node-name">Public LLM API / Private SLM</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node green-node"><div class="node-label">Embeddings</div><div class="node-name">voyage-law-2</div></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer-label">Data & Storage Layer</div>
+      <div class="arch-row">
+        <div class="arch-node red-node"><div class="node-label">Cases DB</div><div class="node-name">PostgreSQL</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node red-node"><div class="node-label">Knowledge Graph</div><div class="node-name">Neo4j + Weaviate</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node red-node"><div class="node-label">Documents</div><div class="node-name">S3 / Azure Blob</div></div>
+        <div class="arch-arrow-h">—</div>
+        <div class="arch-node red-node"><div class="node-label">Cache</div><div class="node-name">Redis</div></div>
+      </div>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="section-title"><em class="icon">◈</em> Technology Stack</div>
+    <table class="arch-table mb-56">
+      <thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Client Portal</td><td>React + React Native</td><td>Web and mobile interface for clients</td><td>Single codebase, responsive + PWA</td></tr>
+        <tr><td>Lawyer Dashboard</td><td>React (Admin-grade UI)</td><td>Case management, AI tools, approvals</td><td>Real-time updates via WebSocket</td></tr>
+        <tr><td>Backend</td><td>Python — FastAPI + Django (hybrid)</td><td>FastAPI for async LLM-heavy endpoints; Django for admin, ORM, and case lifecycle management</td><td>Two services, same database; FastAPI handles agentic pipeline calls without blocking</td></tr>
+        <tr><td>Agentic Orchestration</td><td>LangGraph</td><td>Stateful multi-agent graph where each node is a specialist agent (Triage → Research → Drafting → Review). Handles conditional branching (e.g., request more docs before proceeding), retries, and human-in-the-loop checkpoints</td><td>Preferred over LangChain for complex legal workflows that require state persistence across async steps and conditional re-routing</td></tr>
+        <tr><td>Triage Agent</td><td><strong>Public LLM API</strong> (e.g. OpenAI, Anthropic) <em>or</em> <strong>Private / On-Premise SLM</strong> (e.g. Mistral, Llama 3, Phi-4) with structured JSON output</td><td>Classifies legal issue type, identifies jurisdiction, flags urgency, detects missing documents, and generates a structured case brief — all in one agentic pass. Public API is faster to deploy; Private SLM ensures attorney-client privileged data never leaves the client's infrastructure.</td><td>This is the most data-sensitive point in the pipeline. For legal firms with strict confidentiality requirements, Private SLM on-premise or in a private cloud VPC is strongly recommended over a public API.</td></tr>
+        <tr><td>Research Agent</td><td>Graph-RAG over Neo4j + <code>voyage-law-2</code> embeddings</td><td>Traverses the legal knowledge graph to retrieve statutes, case law, standard clauses, and procedural guides that are relationally connected to the client's issue — not just semantically similar</td><td>Graph-RAG is critical here: a contract dispute case needs to retrieve the relevant statute, cases interpreting that statute, and standard contract clauses — which are graph relationships, not vector neighbours</td></tr>
+        <tr><td>Drafting Agent</td><td><strong>Public LLM API or Private / On-Premise SLM</strong> — consistent with the Triage Agent deployment choice</td><td>Generates a structured draft response grounded in retrieved legal references. Includes source citations for every claim so the reviewing lawyer can verify instantly</td><td>All draft content is attribution-anchored to the knowledge base; hallucination risk is substantially reduced by retrieval grounding + citation enforcement in the prompt. Same LLM deployment choice as triage — avoid mixing public and private within one pipeline for consistency and auditability.</td></tr>
+        <tr><td>Embeddings</td><td><code>voyage-law-2</code> (Voyage AI)</td><td>Legal-domain-optimised embeddings for semantic search across the knowledge graph and case corpus</td><td>Outperforms OpenAI and Cohere general embeddings on legal retrieval benchmarks; drop-in replacement with standard API</td></tr>
+        <tr><td>Vector Store</td><td>Weaviate</td><td>Hybrid vector + keyword search; stores embedded knowledge base documents and case summaries</td><td>Native Graph-RAG support; multi-tenancy for firm-level data isolation</td></tr>
+        <tr><td>Knowledge Graph</td><td>Neo4j</td><td>Stores the legal knowledge base as a graph of entities and relationships (statutes → clauses → cases → procedures)</td><td>Enables multi-hop retrieval that flat vector search cannot perform; essential for accurate legal research</td></tr>
+        <tr><td>Reranking</td><td>Cohere Rerank</td><td>Re-scores retrieved knowledge graph results before feeding to the drafting agent</td><td>Improves draft quality by ensuring the most contextually relevant references are prioritised</td></tr>
+        <tr><td>Primary Database</td><td>PostgreSQL</td><td>Cases, users, messages, audit logs, document metadata</td><td>Row-level security for multi-tenancy; GDPR-compliant</td></tr>
+        <tr><td>Cache / Queue</td><td>Redis + Celery</td><td>Session cache; async task queue for agentic pipeline jobs</td><td>Agentic pipelines run as background tasks; WebSocket pushes status updates to lawyer dashboard in real-time</td></tr>
+        <tr><td>Notifications</td><td>AWS SES / Twilio / Firebase</td><td>Email, SMS, push alerts for clients and lawyers</td><td>SLA breach alerts, case status updates, lawyer assignment notifications</td></tr>
+        <tr><td>Document Storage</td><td>AWS S3 / Azure Blob</td><td>Encrypted secure document storage</td><td>Pre-signed time-limited URLs; no permanent public links</td></tr>
+        <tr><td>Infra / DevOps</td><td>Docker + Kubernetes (EKS / AKS)</td><td>Containerised, auto-scaling microservices deployment</td><td>CI/CD via GitHub Actions; LangGraph agents deployed as independent scalable services</td></tr>
+      </tbody>
+    </table>
+
+    <!-- PART 1: CLIENT FLOW -->
+    <div class="section-title"><em class="icon">◈</em> Part 1 — Client Experience Flow</div>
+    <div class="flow mb-56">
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <h4>Registration & Onboarding</h4>
+            <p>Client registers with basic KYC verification. Guided onboarding explains how to describe their issue and what documents to prepare.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <h4>Issue Submission</h4>
+            <p>Client uploads documents (legal notices, contracts) and/or describes their legal situation in plain language via a guided intake form.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <h4>Agentic Triage — Issue Classification & Gap Detection</h4>
+            <p>The LangGraph Triage Agent takes over: it classifies the legal issue type and jurisdiction using the configured LLM (Public API or Private SLM) with structured output — no separate classifier needed. It identifies missing or required documents and dynamically prompts the client for anything needed before proceeding. The agent loops — asking follow-up questions and processing new uploads — until it has sufficient information to proceed. This is a stateful agentic loop, not a single-pass classification.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">04</div>
+          <div class="step-body">
+            <h4>Multi-Agent Research & Draft Generation</h4>
+            <p>Two specialist agents run in sequence within the LangGraph pipeline. The <strong>Research Agent</strong> queries the Neo4j legal knowledge graph using Graph-RAG — traversing statute → case → clause relationships to retrieve grounded, citation-backed references. The <strong>Drafting Agent</strong> (powered by the same configured LLM — Public API or Private SLM) then generates a structured response draft anchored to those citations, with every claim traceable to a source in the knowledge base. Cohere Rerank ensures the most relevant references are prioritised before the draft is written.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-line"></div>
+          <div class="step-num">05</div>
+          <div class="step-body">
+            <h4>Lawyer Assignment, Review & Approval</h4>
+            <p>The case — with AI-generated brief, source-cited draft, and full document set — is routed to an available lawyer via the Case Router (by specialisation, jurisdiction, and workload). The lawyer reviews in the Dashboard, uses the AI Research Assistant for ad-hoc queries, edits the draft in the inline editor, and approves. A human-in-the-loop checkpoint in LangGraph ensures no response reaches the client without explicit lawyer approval.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">06</div>
+          <div class="step-body" style="padding-bottom: 8px;">
+            <h4>Final Response Delivery</h4>
+            <p>Lawyer approves the final response. Client receives it via the portal and email within the agreed SLA (e.g., 24 hours). Case is marked resolved; client can follow up if needed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PART 2: LAWYER EXPERIENCE -->
+    <div class="section-title"><em class="icon">◈</em> Part 2 — Lawyer Dashboard Experience</div>
+    <div class="cards-grid mb-56">
+      <div class="card accent">
+        <div class="card-icon">📋</div>
+        <h4>Case Queue & Overview</h4>
+        <p>Paginated, filterable list of incoming cases. Each case shows AI-generated issue type, priority, client summary, SLA timer, and document count at a glance.</p>
+      </div>
+      <div class="card accent">
+        <div class="card-icon">🤖</div>
+        <h4>AI Research Assistant</h4>
+        <p>Lawyer can query the legal knowledge base in natural language ("What are the standard eviction notice requirements in California?") and get cited answers instantly.</p>
+      </div>
+      <div class="card accent">
+        <div class="card-icon">✏️</div>
+        <h4>Draft Editor</h4>
+        <p>Rich text editor pre-populated with the AI draft. Inline AI suggestions for clause improvements. Track-changes style editing with version history.</p>
+      </div>
+      <div class="card accent">
+        <div class="card-icon">📊</div>
+        <h4>Analytics & Productivity</h4>
+        <p>Personal stats: cases handled, average response time, approval rate. Helps lawyers track their performance and the platform track SLA compliance.</p>
+      </div>
+    </div>
+
+    <!-- LEGAL KNOWLEDGE DATABASE -->
+    <div class="section-title"><em class="icon">◈</em> Legal Knowledge Database Architecture</div>
+    <table class="arch-table mb-56">
+      <thead><tr><th>Content Type</th><th>Description</th><th>Update Frequency</th></tr></thead>
+      <tbody>
+        <tr><td>Standard Templates</td><td>Jurisdiction-specific templates for common document types (NDA, lease, employment)</td><td>Quarterly</td></tr>
+        <tr><td>Statutory References</td><td>Relevant legislation excerpts, regulations, and code sections</td><td>On law change</td></tr>
+        <tr><td>Case Law Summaries</td><td>Curated summaries of landmark and relevant case decisions</td><td>Monthly</td></tr>
+        <tr><td>Procedural Guides</td><td>Step-by-step guides for common legal procedures (filing, responding)</td><td>Quarterly</td></tr>
+        <tr><td>Clause Library</td><td>Pre-approved clauses for common legal situations, tagged by risk level</td><td>Monthly</td></tr>
+      </tbody>
+    </table>
+
+    <!-- NOTIFICATIONS & SLA -->
+    <div class="section-title"><em class="icon">◈</em> Notification & SLA Management</div>
+    <div class="grid-2 mb-56">
+      <div class="callout info">
+        <strong>Client Notifications</strong>
+        Submission confirmation, additional document request, SLA estimate, draft under review alert, final response delivery — all via email + in-app + optional SMS.
+      </div>
+      <div class="callout warn">
+        <strong>Lawyer Alerts</strong>
+        New case assigned, SLA approaching (50%, 75%, 90% warnings), escalation alert for overdue cases, admin override notifications.
+      </div>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="section-title"><em class="icon">◈</em> Security & Compliance</div>
+    <table class="arch-table mb-56">
+      <thead><tr><th>Control</th><th>Implementation</th><th>Standard</th></tr></thead>
+      <tbody>
+        <tr><td>Data Encryption</td><td>TLS 1.3 in transit, AES-256 at rest for all documents and PII</td><td>GDPR, HIPAA-ready</td></tr>
+        <tr><td>Multi-Tenancy Isolation</td><td>Row-level security in PostgreSQL; no cross-firm data access</td><td>SOC 2</td></tr>
+        <tr><td>Role-Based Access</td><td>Strict RBAC: Client, Lawyer, Admin, Super-Admin roles with permission matrices</td><td>Least privilege</td></tr>
+        <tr><td>Document Access</td><td>Pre-signed, time-limited S3 URLs; no permanent public links</td><td>GDPR Art. 32</td></tr>
+        <tr><td>Audit Trail</td><td>Immutable log of all document views, edits, approvals, and API calls</td><td>SOC 2 Type II</td></tr>
+        <tr><td>Infrastructure</td><td>VPC, WAF, DDoS protection, private subnets for databases</td><td>NIST CSF</td></tr>
+        <tr><td>Compliance</td><td>GDPR, state bar regulations (US), attorney-client privilege safeguards</td><td>Jurisdiction-specific</td></tr>
+      </tbody>
+    </table>
+
+    <!-- SCALABILITY -->
+    <div class="section-title"><em class="icon">◈</em> Scalability & Infrastructure</div>
+    <div class="cards-grid mb-56">
+      <div class="card">
+        <div class="card-icon">🏗️</div>
+        <h4>Development</h4>
+        <p>GPU-equipped cloud instances for model fine-tuning and evaluation. Isolated staging environment mirroring production.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">☁️</div>
+        <h4>Production</h4>
+        <p>Kubernetes-orchestrated microservices on AWS EKS or Azure AKS. Auto-scaling based on active case volume. Multi-AZ deployment for high availability.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💾</div>
+        <h4>Storage</h4>
+        <p>Geo-redundant encrypted storage for legal documents. Tiered storage: hot for active cases, cold archive for closed cases after 90 days.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h4>Performance</h4>
+        <p>Redis caching for frequent queries. Async Celery workers for AI processing (prevents blocking API responses). CDN for static frontend assets.</p>
+      </div>
+    </div>
+
+    <!-- LIMITATIONS -->
+    <div class="section-title"><em class="icon">◈</em> Known Limitations</div>
+    <div class="callout limit"><strong>AI Does Not Replace Lawyers</strong>All client-facing responses must be approved by a licensed legal professional. The AI acts strictly as a drafter and researcher — legal responsibility remains with the approving lawyer.</div>
+    <div class="callout limit"><strong>Knowledge Base Dependency</strong>Response quality depends on the completeness of the legal knowledge database. Rare or highly jurisdiction-specific matters may require additional manual research by the lawyer.</div>
+    <div class="callout limit"><strong>SLA Dependency on Lawyer Availability</strong>The 24-hour SLA is contingent on having sufficient active lawyers on the platform. Scaling the lawyer network is a business-side dependency.</div>
+
+    <div class="tags">
+      <span class="tag primary">Full Platform</span>
+      <span class="tag">Multi-Agent (LangGraph)</span>
+      <span class="tag">Graph-RAG</span>
+      <span class="tag">Neo4j Knowledge Graph</span>
+      <span class="tag">Public LLM API or Private SLM</span>
+      <span class="tag">voyage-law-2 Embeddings</span>
+      <span class="tag">Weaviate</span>
+      <span class="tag">Cohere Rerank</span>
+      <span class="tag">Human-in-the-Loop</span>
+      <span class="tag">FastAPI + Django</span>
+      <span class="tag">24hr SLA</span>
+      <span class="tag">GDPR Compliant</span>
+      <span class="tag">AWS / Azure</span>
+    </div>
+
+  </div>
+</div>
+
+<div class="doc-separator"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- COMPARISON -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="compare">
+  <div class="doc-section">
+    <div class="doc-header">
+      <div class="doc-label">Comparative Overview</div>
+      <h2>Product 1 vs Product 2</h2>
+      <p class="doc-tagline">A side-by-side reference to clearly distinguish the two systems in scope, complexity, and deployment approach.</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-col col-a">
+        <div class="col-label">Product 01</div>
+        <h3>Document Comparison Tool</h3>
+        <ul>
+          <li><strong>Type:</strong> Single-purpose focused tool</li>
+          <li><strong>Analogy:</strong> "Grammarly for legal differences"</li>
+          <li><strong>Users:</strong> Lawyers, paralegals, legal reviewers</li>
+          <li><strong>Input:</strong> Upload one document</li>
+          <li><strong>Output:</strong> Structured diff report vs standard template</li>
+          <li><strong>AI Approach:</strong> LLM classification + Graph-RAG retrieval + LLM-as-Judge diff</li>
+          <li><strong>Orchestration:</strong> Single-pipeline (no stateful agent loop needed)</li>
+          <li><strong>Human in loop:</strong> Optional — reviewer reads and acts on the report</li>
+          <li><strong>Complexity:</strong> Medium — well-scoped, fewer system components</li>
+          <li><strong>Time to MVP:</strong> Faster to ship</li>
+          <li><strong>Key AI Stack:</strong> Public LLM API or Private SLM, voyage-law-2, Neo4j, Weaviate, Cohere Rerank</li>
+          <li><strong>Revenue Model:</strong> Per-document / SaaS subscription</li>
+        </ul>
+      </div>
+      <div class="compare-col col-b">
+        <div class="col-label">Product 02</div>
+        <h3>AI Legal Assistant Platform</h3>
+        <ul>
+          <li><strong>Type:</strong> Full multi-role agentic ecosystem</li>
+          <li><strong>Analogy:</strong> "Digital legal assistant + lawyer workflow system"</li>
+          <li><strong>Users:</strong> Clients, lawyers, admins</li>
+          <li><strong>Input:</strong> Legal query, notice, or document</li>
+          <li><strong>Output:</strong> Lawyer-approved, citation-grounded professional response</li>
+          <li><strong>AI Approach:</strong> Multi-agent pipeline (Triage → Research → Drafting → Review)</li>
+          <li><strong>Orchestration:</strong> LangGraph stateful agent graph with human-in-the-loop checkpoint</li>
+          <li><strong>Human in loop:</strong> Mandatory — lawyer must approve before any response is sent</li>
+          <li><strong>Complexity:</strong> High — multi-service, multi-role platform</li>
+          <li><strong>Time to MVP:</strong> Longer — multi-role onboarding and workflow required</li>
+          <li><strong>Key AI Stack:</strong> LangGraph, Public LLM API or Private SLM, Graph-RAG, Neo4j, voyage-law-2, Cohere Rerank</li>
+          <li><strong>Revenue Model:</strong> SaaS platform + per-case fees</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- RATE CARD & BUDGET -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="budget">
+<div class="doc-separator"></div>
+<div class="doc-section">
+
+  <div class="doc-header">
+    <div class="doc-label">Commercial Proposal</div>
+    <h2>Rate Card &<br><em style="font-style:normal;color:var(--navy);">Project Budgets</em></h2>
+    <p class="doc-tagline">Transparent hourly rates by role and technology discipline, with phased project budgets for both products — including ongoing maintenance provisions for legal content updates.</p>
+  </div>
+
+  <!-- RATE CARD -->
+  <div class="section-title"><em class="icon">◈</em> Engagement Rate Card</div>
+  <div class="callout info" style="margin-bottom: 28px;">
+    <strong>How to Read This Rate Card</strong>
+    All rates are in USD per hour. Blended project rates are negotiable for fixed-scope engagements. Rates reflect the specialised nature of legal AI work — standard software development rates apply to generic engineering tasks; AI/ML and legal domain work carry a premium due to the depth of expertise required.
+  </div>
+  <table class="arch-table mb-56">
+    <thead><tr><th>Role</th><th>Discipline</th><th>Rate (USD/hr)</th><th>Scope of Work</th></tr></thead>
+    <tbody>
+      <tr><td>Solution Architect</td><td>Architecture & Technical Leadership</td><td><strong>$120 – $150</strong></td><td>Overall system design, technology decisions, integration architecture, cloud infrastructure planning, client-facing technical review</td></tr>
+      <tr><td>AI / ML Engineer</td><td>LLM Integration, RAG, Agentic Pipelines</td><td><strong>$110 – $140</strong></td><td>LLM orchestration (LangGraph), Graph-RAG implementation, embedding pipeline, LLM-as-Judge diff logic, agentic workflow design and evaluation</td></tr>
+      <tr><td>Knowledge Graph Engineer</td><td>Neo4j, Graph-RAG, Data Modelling</td><td><strong>$100 – $130</strong></td><td>Legal knowledge graph construction, entity-relationship modelling, Graph-RAG traversal queries, Weaviate integration, knowledge base ingestion pipelines</td></tr>
+      <tr><td>Backend Engineer</td><td>Python — FastAPI / Django</td><td><strong>$80 – $105</strong></td><td>REST API development, database schema, case lifecycle management, async task queues (Celery + Redis), authentication, multi-tenancy implementation</td></tr>
+      <tr><td>Frontend Engineer</td><td>React / React Native</td><td><strong>$75 – $100</strong></td><td>Client portal, lawyer dashboard, diff report viewer, real-time WebSocket updates, responsive design, accessibility compliance</td></tr>
+      <tr><td>DevOps / Cloud Engineer</td><td>Kubernetes, AWS / Azure, CI/CD</td><td><strong>$85 – $110</strong></td><td>Container orchestration, auto-scaling configuration, VPC setup, WAF, S3 storage lifecycle policies, CI/CD pipelines, monitoring and alerting</td></tr>
+      <tr><td>Legal Domain Consultant</td><td>Legal Knowledge & Content QA</td><td><strong>$95 – $130</strong></td><td>Template corpus curation, knowledge graph content validation, diff output legal accuracy review, regulatory compliance guidance (GDPR, state bar requirements)</td></tr>
+      <tr><td>QA / Test Engineer</td><td>Testing & Evaluation</td><td><strong>$60 – $80</strong></td><td>Automated test suites, LLM output evaluation (hallucination detection, citation accuracy), end-to-end workflow testing, security penetration testing coordination</td></tr>
+      <tr><td>Project Manager</td><td>Delivery & Client Coordination</td><td><strong>$70 – $90</strong></td><td>Sprint planning, milestone tracking, client communication, risk management, change request management, documentation</td></tr>
+    </tbody>
+  </table>
+
+  <!-- PRODUCT 1 BUDGET -->
+  <div class="section-title"><em class="icon">◈</em> Product 1 — Document Comparison Tool: Project Budget</div>
+  <div class="callout info" style="margin-bottom: 24px;">
+    <strong>Estimation Basis</strong>
+    Estimates are based on a standard 40-hr week engagement. Phase durations assume a team of 4–5 people. Hours per role reflect realistic effort for a well-scoped MVP with production-grade security and a modern AI stack. All figures are in USD.
+  </div>
+  <table class="arch-table" style="margin-bottom: 20px;">
+    <thead><tr><th>Phase</th><th>Duration</th><th>Key Activities</th><th>Roles Engaged</th><th>Estimated Cost (USD)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Phase 1</strong><br>Discovery & Architecture</td><td>2 weeks</td><td>Requirements finalisation, system design sign-off, LLM deployment decision (Public API vs Private SLM), knowledge graph schema design, infrastructure planning</td><td>Solution Architect, AI/ML Engineer, Legal Consultant, PM</td><td>$18,000 – $24,000</td></tr>
+      <tr><td><strong>Phase 2</strong><br>Data & Knowledge Foundation</td><td>3 weeks</td><td>Legal template corpus curation, Neo4j knowledge graph construction, Weaviate vector store setup, voyage-law-2 embedding pipeline, Graph-RAG implementation and testing</td><td>Knowledge Graph Engineer, AI/ML Engineer, Legal Consultant, Backend Engineer</td><td>$28,000 – $38,000</td></tr>
+      <tr><td><strong>Phase 3</strong><br>Core AI Pipeline</td><td>4 weeks</td><td>Document parsing (Docling), LLM classification agent, Graph-RAG retrieval, LLM-as-Judge diff engine, Cohere Rerank integration, severity scoring, output formatting</td><td>AI/ML Engineer, Backend Engineer, Legal Consultant (QA)</td><td>$34,000 – $46,000</td></tr>
+      <tr><td><strong>Phase 4</strong><br>Product & Frontend</td><td>3 weeks</td><td>React frontend — upload UI, interactive diff report viewer, clause highlighting, severity badges, PDF/Word export, user authentication, role-based access</td><td>Frontend Engineer, Backend Engineer, DevOps Engineer</td><td>$24,000 – $32,000</td></tr>
+      <tr><td><strong>Phase 5</strong><br>Security, Testing & Deployment</td><td>2 weeks</td><td>Security hardening (encryption, RBAC, audit logging), LLM output evaluation (hallucination rate, citation accuracy), end-to-end testing, Kubernetes deployment, monitoring setup</td><td>DevOps Engineer, QA Engineer, AI/ML Engineer, Solution Architect</td><td>$18,000 – $24,000</td></tr>
+    </tbody>
+  </table>
+  <div style="background:var(--navy);color:#fff;padding:20px 28px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:4px;">PRODUCT 1 — TOTAL PROJECT INVESTMENT</div>
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;">$122,000 – $164,000</div>
+    </div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);max-width:360px;line-height:1.6;">Covers full MVP delivery across 14 weeks. Excludes ongoing LLM API costs (variable, usage-based) and cloud infrastructure running costs (~$800–$1,800/month estimated).</div>
+  </div>
+  <div class="callout warn" style="margin-bottom: 56px;">
+    <strong>LLM API vs. Private SLM Cost Impact</strong>
+    Choosing a Public LLM API (OpenAI, Anthropic) adds a recurring per-token cost — estimated $300–$1,200/month at moderate usage volumes. Choosing a Private SLM eliminates this but adds a one-time GPU infrastructure setup cost of approximately $12,000–$20,000, absorbed in Phase 2–3 if selected.
+  </div>
+
+  <!-- PRODUCT 2 BUDGET -->
+  <div class="section-title"><em class="icon">◈</em> Product 2 — AI Legal Assistant Platform: Project Budget</div>
+  <div class="callout info" style="margin-bottom: 24px;">
+    <strong>Estimation Basis</strong>
+    Product 2 is a significantly larger engagement — multi-role platform, agentic pipeline, lawyer workflow, real-time case management, and a knowledge graph. Estimates assume a team of 7–8 people across phases. All figures are in USD.
+  </div>
+  <table class="arch-table" style="margin-bottom: 20px;">
+    <thead><tr><th>Phase</th><th>Duration</th><th>Key Activities</th><th>Roles Engaged</th><th>Estimated Cost (USD)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Phase 1</strong><br>Discovery & Architecture</td><td>3 weeks</td><td>Full requirements (client, lawyer, admin roles), LLM deployment decision, multi-tenancy design, agentic pipeline architecture (LangGraph graph design), SLA and notification framework design, data governance planning</td><td>Solution Architect, AI/ML Engineer, Legal Consultant, PM</td><td>$26,000 – $34,000</td></tr>
+      <tr><td><strong>Phase 2</strong><br>Data & Knowledge Foundation</td><td>4 weeks</td><td>Legal knowledge graph (Neo4j) construction, statute and case law corpus ingestion, Weaviate setup, voyage-law-2 embedding pipeline, Graph-RAG traversal implementation, knowledge base admin tooling</td><td>Knowledge Graph Engineer ×2, AI/ML Engineer, Legal Consultant, Backend Engineer</td><td>$44,000 – $58,000</td></tr>
+      <tr><td><strong>Phase 3</strong><br>Agentic AI Pipeline</td><td>5 weeks</td><td>LangGraph agent graph (Triage → Research → Drafting → Review nodes), stateful session management, human-in-the-loop checkpoints, Cohere Rerank integration, citation-grounded draft generation, agent evaluation and hallucination testing</td><td>AI/ML Engineer ×2, Knowledge Graph Engineer, Legal Consultant (QA), Backend Engineer</td><td>$56,000 – $74,000</td></tr>
+      <tr><td><strong>Phase 4</strong><br>Case Management Backend</td><td>4 weeks</td><td>Case lifecycle API (FastAPI + Django), case routing logic, SLA tracking engine, notification service (email/SMS/push), Redis + Celery async job queue, PostgreSQL schema, row-level multi-tenancy security</td><td>Backend Engineer ×2, DevOps Engineer, Solution Architect</td><td>$38,000 – $50,000</td></tr>
+      <tr><td><strong>Phase 5</strong><br>Frontend — Client Portal & Lawyer Dashboard</td><td>5 weeks</td><td>React client portal (intake form, document upload, case tracking), React lawyer dashboard (case queue, AI draft editor with track-changes, research assistant, analytics), React Native mobile wrapper, WebSocket real-time updates</td><td>Frontend Engineer ×2, Backend Engineer, DevOps Engineer</td><td>$46,000 – $60,000</td></tr>
+      <tr><td><strong>Phase 6</strong><br>Security, Testing & Deployment</td><td>3 weeks</td><td>End-to-end security audit, RBAC enforcement, GDPR compliance review, attorney-client privilege safeguards, full LLM output evaluation suite, UAT with lawyer users, Kubernetes deployment (EKS/AKS), monitoring, alerting, runbook documentation</td><td>DevOps Engineer, QA Engineer ×2, Solution Architect, Legal Consultant</td><td>$30,000 – $40,000</td></tr>
+    </tbody>
+  </table>
+  <div style="background:var(--navy);color:#fff;padding:20px 28px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:4px;">PRODUCT 2 — TOTAL PROJECT INVESTMENT</div>
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;">$240,000 – $316,000</div>
+    </div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);max-width:360px;line-height:1.6;">Covers full platform delivery across 24 weeks. Excludes ongoing LLM API costs, cloud infrastructure (~$2,500–$5,000/month), and lawyer network recruitment costs.</div>
+  </div>
+  <div class="callout warn" style="margin-bottom: 56px;">
+    <strong>LLM API vs. Private SLM Cost Impact</strong>
+    Public LLM API adds estimated $800–$3,000/month recurring cost depending on case volume. Private SLM adds $25,000–$45,000 one-time GPU infrastructure cost (included as an optional add-on to Phase 3), but eliminates all per-token charges and is the recommended choice for a platform handling privileged legal communications.
+  </div>
+
+  <!-- MAINTENANCE RATE CARD -->
+  <div class="section-title"><em class="icon">◈</em> Ongoing Maintenance & Legal Content Updates</div>
+  <div class="overview-box" style="margin-bottom: 32px;">
+    <h3>Why Maintenance Is Non-Negotiable for Legal AI</h3>
+    <p>Law is not static. Statutes are amended, case law evolves, regulatory requirements change, and new document types emerge. A legal AI product that is not actively maintained becomes unreliable — and in the legal domain, unreliable means liability. The maintenance contract covers both technical upkeep and legal knowledge base currency.</p>
+  </div>
+  <table class="arch-table mb-56">
+    <thead><tr><th>Maintenance Activity</th><th>Frequency</th><th>Roles</th><th>Est. Monthly Hours</th><th>Est. Monthly Cost (USD)</th></tr></thead>
+    <tbody>
+      <tr><td>Legal Knowledge Graph Updates<br><span style="font-size:12px;color:var(--muted);">Statute amendments, new case law, updated templates</span></td><td>Monthly</td><td>Legal Consultant + Knowledge Graph Engineer</td><td>20 – 30 hrs</td><td>$2,400 – $3,900</td></tr>
+      <tr><td>LLM Pipeline Re-evaluation<br><span style="font-size:12px;color:var(--muted);">Prompt tuning as new model versions release, hallucination rate monitoring</span></td><td>Quarterly</td><td>AI/ML Engineer</td><td>12 – 20 hrs/quarter</td><td>$400 – $700/month avg</td></tr>
+      <tr><td>Security Patches & Dependency Updates<br><span style="font-size:12px;color:var(--muted);">Framework updates, CVE patches, library upgrades</span></td><td>Monthly</td><td>DevOps + Backend Engineer</td><td>8 – 12 hrs</td><td>$680 – $1,260</td></tr>
+      <tr><td>New Jurisdiction / Document Type Onboarding<br><span style="font-size:12px;color:var(--muted);">Expanding the template corpus to new states, countries, or document categories</span></td><td>On-demand</td><td>Legal Consultant + Knowledge Graph Engineer + AI/ML Engineer</td><td>Per-request scoped</td><td>$4,000 – $9,000 per expansion</td></tr>
+      <tr><td>Feature Enhancements & Bug Fixes</td><td>Ongoing (sprint-based)</td><td>Backend + Frontend + AI/ML Engineer</td><td>20 – 40 hrs</td><td>$1,800 – $4,200</td></tr>
+      <tr><td>SLA Monitoring, Uptime & Incident Response</td><td>Always-on</td><td>DevOps Engineer (on-call)</td><td>Retainer-based</td><td>$1,200 – $1,800/month</td></tr>
+    </tbody>
+  </table>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--rule);margin-bottom: 56px;">
+    <div style="background:#fff;padding:32px 28px;border-top:4px solid var(--steel);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--steel);margin-bottom:8px;">PRODUCT 1 — MAINTENANCE</div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:12px;">$6,500 – $9,500 / month</div>
+      <p style="font-size:14px;color:var(--muted);line-height:1.65;">Covers knowledge graph updates (primary cost driver given monthly statute/template refresh), security maintenance, LLM pipeline monitoring, and basic feature work. Lower legal content overhead than Product 2 due to simpler template-comparison scope.</p>
+    </div>
+    <div style="background:#fff;padding:32px 28px;border-top:4px solid var(--sage);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--sage);margin-bottom:8px;">PRODUCT 2 — MAINTENANCE</div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:12px;">$12,000 – $18,000 / month</div>
+      <p style="font-size:14px;color:var(--muted);line-height:1.65;">Higher maintenance cost reflecting: broader legal knowledge base (multi-jurisdiction, multi-issue-type), multi-agent pipeline monitoring, lawyer dashboard feature iteration, SLA uptime SLAs, and the larger surface area of a full client-facing platform. Legal content updates are the largest recurring line item.</p>
+    </div>
+  </div>
+
+  <div class="callout limit">
+    <strong>Important Caveat on All Estimates</strong>
+    All budget figures are indicative estimates based on standard market rates for a US-based legal AI engagement as of 2026. Final pricing is subject to detailed scope confirmation, LLM deployment choice (Public API vs Private SLM), team composition, and timeline. A fixed-price or time-and-materials contract structure can be discussed based on client preference.
+  </div>
+
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>AI Legal Platform — System Design Documents</strong><br><br>
+  Prepared April 2026 &nbsp;·&nbsp; Version 1.0 &nbsp;·&nbsp; Confidential<br>
+  These documents are prepared for client review and do not constitute legal or regulatory advice.<br>
+  All architectural decisions are subject to final confirmation of technology stack and client requirements.
+</footer>
+
+</body>
+</html>
