@@ -125,6 +125,25 @@
   }
   .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
 
+  .cover-credit {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    color: rgba(255,255,255,0.38);
+    margin-top: 28px;
+    position: relative;
+  }
+  .cover-credit a {
+    color: rgba(201,168,76,0.85);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .cover-credit a:hover {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold);
+  }
+
   /* ── NAV BAR ── */
   .topnav {
     position: sticky; top: 0; z-index: 100;
@@ -723,6 +742,7 @@
     <a href="#doc2" class="btn-secondary">Product 2 — Legal Assistant Platform</a>
     <a href="#budget" class="btn-secondary">Project Budgets & Rate Card</a>
   </div>
+  <p class="cover-credit">Made by <a href="https://www.linkedin.com/in/adityaraj-saas/" target="_blank" rel="noopener noreferrer">Aditya</a></p>
 </section>
 
 <!-- TOP NAV -->
