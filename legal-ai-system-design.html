@@ -706,10 +706,6 @@
       font-size: 12px;
     }
 
-    /* Inline two-column maintenance blocks — stack on narrow screens */
-    #budget .doc-section > div[style*="grid-template-columns:1fr 1fr"] {
-      grid-template-columns: 1fr !important;
-    }
   }
 </style>
 </head>
@@ -1365,7 +1361,7 @@
   <div class="doc-header">
     <div class="doc-label">Commercial Proposal</div>
     <h2>Rate Card &<br><em style="font-style:normal;color:var(--navy);">Project Budgets</em></h2>
-    <p class="doc-tagline">Transparent hourly rates by role and technology discipline, with phased project budgets for both products — including ongoing maintenance provisions for legal content updates.</p>
+    <p class="doc-tagline">Transparent hourly rates by role and technology discipline, with phased project budgets for both products — sized for a solo full-stack / AI developer — plus guidance for ongoing maintenance billed by the hour.</p>
   </div>
 
   <!-- RATE CARD -->
@@ -1377,15 +1373,15 @@
   <table class="arch-table mb-56">
     <thead><tr><th>Role</th><th>Discipline</th><th>Rate (USD/hr)</th><th>Scope of Work</th></tr></thead>
     <tbody>
-      <tr><td>Solution Architect</td><td>Architecture & Technical Leadership</td><td><strong>$120 – $150</strong></td><td>Overall system design, technology decisions, integration architecture, cloud infrastructure planning, client-facing technical review</td></tr>
-      <tr><td>AI / ML Engineer</td><td>LLM Integration, RAG, Agentic Pipelines</td><td><strong>$110 – $140</strong></td><td>LLM orchestration (LangGraph), Graph-RAG implementation, embedding pipeline, LLM-as-Judge diff logic, agentic workflow design and evaluation</td></tr>
-      <tr><td>Knowledge Graph Engineer</td><td>Neo4j, Graph-RAG, Data Modelling</td><td><strong>$100 – $130</strong></td><td>Legal knowledge graph construction, entity-relationship modelling, Graph-RAG traversal queries, Weaviate integration, knowledge base ingestion pipelines</td></tr>
-      <tr><td>Backend Engineer</td><td>Python — FastAPI / Django</td><td><strong>$80 – $105</strong></td><td>REST API development, database schema, case lifecycle management, async task queues (Celery + Redis), authentication, multi-tenancy implementation</td></tr>
-      <tr><td>Frontend Engineer</td><td>React / React Native</td><td><strong>$75 – $100</strong></td><td>Client portal, lawyer dashboard, diff report viewer, real-time WebSocket updates, responsive design, accessibility compliance</td></tr>
-      <tr><td>DevOps / Cloud Engineer</td><td>Kubernetes, AWS / Azure, CI/CD</td><td><strong>$85 – $110</strong></td><td>Container orchestration, auto-scaling configuration, VPC setup, WAF, S3 storage lifecycle policies, CI/CD pipelines, monitoring and alerting</td></tr>
-      <tr><td>Legal Domain Consultant</td><td>Legal Knowledge & Content QA</td><td><strong>$95 – $130</strong></td><td>Template corpus curation, knowledge graph content validation, diff output legal accuracy review, regulatory compliance guidance (GDPR, state bar requirements)</td></tr>
-      <tr><td>QA / Test Engineer</td><td>Testing & Evaluation</td><td><strong>$60 – $80</strong></td><td>Automated test suites, LLM output evaluation (hallucination detection, citation accuracy), end-to-end workflow testing, security penetration testing coordination</td></tr>
-      <tr><td>Project Manager</td><td>Delivery & Client Coordination</td><td><strong>$70 – $90</strong></td><td>Sprint planning, milestone tracking, client communication, risk management, change request management, documentation</td></tr>
+      <tr><td>Solution Architect</td><td>Architecture & Technical Leadership</td><td><strong>$105 – $135</strong></td><td>Overall system design, technology decisions, integration architecture, cloud infrastructure planning, client-facing technical review</td></tr>
+      <tr><td>AI / ML Engineer</td><td>LLM Integration, RAG, Agentic Pipelines</td><td><strong>$95 – $125</strong></td><td>LLM orchestration (LangGraph), Graph-RAG implementation, embedding pipeline, LLM-as-Judge diff logic, agentic workflow design and evaluation</td></tr>
+      <tr><td>Knowledge Graph Engineer</td><td>Neo4j, Graph-RAG, Data Modelling</td><td><strong>$88 – $118</strong></td><td>Legal knowledge graph construction, entity-relationship modelling, Graph-RAG traversal queries, Weaviate integration, knowledge base ingestion pipelines</td></tr>
+      <tr><td>Backend Engineer</td><td>Python — FastAPI / Django</td><td><strong>$70 – $92</strong></td><td>REST API development, database schema, case lifecycle management, async task queues (Celery + Redis), authentication, multi-tenancy implementation</td></tr>
+      <tr><td>Frontend Engineer</td><td>React / React Native</td><td><strong>$65 – $88</strong></td><td>Client portal, lawyer dashboard, diff report viewer, real-time WebSocket updates, responsive design, accessibility compliance</td></tr>
+      <tr><td>DevOps / Cloud Engineer</td><td>Kubernetes, AWS / Azure, CI/CD</td><td><strong>$75 – $98</strong></td><td>Container orchestration, auto-scaling configuration, VPC setup, WAF, S3 storage lifecycle policies, CI/CD pipelines, monitoring and alerting</td></tr>
+      <tr><td>Legal Domain Consultant</td><td>Legal Knowledge & Content QA</td><td><strong>$82 – $115</strong></td><td>Template corpus curation, knowledge graph content validation, diff output legal accuracy review, regulatory compliance guidance (GDPR, state bar requirements)</td></tr>
+      <tr><td>QA / Test Engineer</td><td>Testing & Evaluation</td><td><strong>$52 – $72</strong></td><td>Automated test suites, LLM output evaluation (hallucination detection, citation accuracy), end-to-end workflow testing, security penetration testing coordination</td></tr>
+      <tr><td>Project Manager</td><td>Delivery & Client Coordination</td><td><strong>$60 – $78</strong></td><td>Sprint planning, milestone tracking, client communication, risk management, change request management, documentation</td></tr>
     </tbody>
   </table>
 
@@ -1393,93 +1389,75 @@
   <div class="section-title"><em class="icon">◈</em> Product 1 — Document Comparison Tool: Project Budget</div>
   <div class="callout info" style="margin-bottom: 24px;">
     <strong>Estimation Basis</strong>
-    Estimates are based on a standard 40-hr week engagement. Phase durations assume a team of 4–5 people. Hours per role reflect realistic effort for a well-scoped MVP with production-grade security and a modern AI stack. All figures are in USD.
+    Estimates assume one principal developer (full-stack + AI) at a blended engagement pace of roughly 35–40 billable hours per week. Phase labels map to the rate-card roles above for reference; all implementation is performed by the same solo builder. Calendar target: <strong>10–12 weeks</strong> to MVP. All figures are in USD.
   </div>
   <table class="arch-table" style="margin-bottom: 20px;">
     <thead><tr><th>Phase</th><th>Duration</th><th>Key Activities</th><th>Roles Engaged</th><th>Estimated Cost (USD)</th></tr></thead>
     <tbody>
-      <tr><td><strong>Phase 1</strong><br>Discovery & Architecture</td><td>2 weeks</td><td>Requirements finalisation, system design sign-off, LLM deployment decision (Public API vs Private SLM), knowledge graph schema design, infrastructure planning</td><td>Solution Architect, AI/ML Engineer, Legal Consultant, PM</td><td>$18,000 – $24,000</td></tr>
-      <tr><td><strong>Phase 2</strong><br>Data & Knowledge Foundation</td><td>3 weeks</td><td>Legal template corpus curation, Neo4j knowledge graph construction, Weaviate vector store setup, voyage-law-2 embedding pipeline, Graph-RAG implementation and testing</td><td>Knowledge Graph Engineer, AI/ML Engineer, Legal Consultant, Backend Engineer</td><td>$28,000 – $38,000</td></tr>
-      <tr><td><strong>Phase 3</strong><br>Core AI Pipeline</td><td>4 weeks</td><td>Document parsing (Docling), LLM classification agent, Graph-RAG retrieval, LLM-as-Judge diff engine, Cohere Rerank integration, severity scoring, output formatting</td><td>AI/ML Engineer, Backend Engineer, Legal Consultant (QA)</td><td>$34,000 – $46,000</td></tr>
-      <tr><td><strong>Phase 4</strong><br>Product & Frontend</td><td>3 weeks</td><td>React frontend — upload UI, interactive diff report viewer, clause highlighting, severity badges, PDF/Word export, user authentication, role-based access</td><td>Frontend Engineer, Backend Engineer, DevOps Engineer</td><td>$24,000 – $32,000</td></tr>
-      <tr><td><strong>Phase 5</strong><br>Security, Testing & Deployment</td><td>2 weeks</td><td>Security hardening (encryption, RBAC, audit logging), LLM output evaluation (hallucination rate, citation accuracy), end-to-end testing, Kubernetes deployment, monitoring setup</td><td>DevOps Engineer, QA Engineer, AI/ML Engineer, Solution Architect</td><td>$18,000 – $24,000</td></tr>
+      <tr><td><strong>Phase 1</strong><br>Discovery & Architecture</td><td>1 week</td><td>Requirements finalisation, system design sign-off, LLM deployment decision (Public API vs Private SLM), knowledge graph schema sketch, minimal infra plan</td><td>Solo developer — architect / PM / AI hat (per rate card)</td><td>$3,800 – $4,500</td></tr>
+      <tr><td><strong>Phase 2</strong><br>Data & Knowledge Foundation</td><td>2 weeks</td><td>Starter template set, Neo4j + Weaviate wiring, voyage-law-2 embedding path, first Graph-RAG slice — enough to prove retrieval for one doc family</td><td>Solo developer — KG + backend + AI</td><td>$4,800 – $5,600</td></tr>
+      <tr><td><strong>Phase 3</strong><br>Core AI Pipeline</td><td>3 weeks</td><td>Docling parse path, LLM classification + clause map, retrieval + rerank, LLM-as-Judge diff MVP, severity labels</td><td>Solo developer — AI / ML + backend</td><td>$6,000 – $7,000</td></tr>
+      <tr><td><strong>Phase 4</strong><br>Product & Frontend</td><td>2.5 weeks</td><td>React upload + diff report UI, auth shell, export basics — shippable client demo</td><td>Solo developer — frontend + backend</td><td>$4,600 – $5,400</td></tr>
+      <tr><td><strong>Phase 5</strong><br>Security, Testing & Deployment</td><td>1.5 weeks</td><td>Hardening pass (TLS, secrets, RBAC basics), smoke + LLM eval spot-checks, single-region deploy (Docker / small K8s or PaaS)</td><td>Solo developer — DevOps + QA + AI</td><td>$3,400 – $4,100</td></tr>
     </tbody>
   </table>
   <div style="background:var(--navy);color:#fff;padding:20px 28px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
     <div>
       <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:4px;">PRODUCT 1 — TOTAL PROJECT INVESTMENT</div>
-      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;">$122,000 – $164,000</div>
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;">$22,500 – $26,500</div>
     </div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.6);max-width:360px;line-height:1.6;">Covers full MVP delivery across 14 weeks. Excludes ongoing LLM API costs (variable, usage-based) and cloud infrastructure running costs (~$800–$1,800/month estimated).</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);max-width:360px;line-height:1.6;">Solo-build MVP across <strong>10–12 weeks</strong> (~$24.5K midpoint). Excludes variable LLM API spend and modest cloud hosting (often on the order of tens to a few hundreds of USD/month at pilot scale).</div>
   </div>
   <div class="callout warn" style="margin-bottom: 56px;">
     <strong>LLM API vs. Private SLM Cost Impact</strong>
-    Choosing a Public LLM API (OpenAI, Anthropic) adds a recurring per-token cost — estimated $300–$1,200/month at moderate usage volumes. Choosing a Private SLM eliminates this but adds a one-time GPU infrastructure setup cost of approximately $12,000–$20,000, absorbed in Phase 2–3 if selected.
+    Public LLM API usage stays pay-as-you-go (token billing). A small private SLM / GPU footprint for pilots is typically a <strong>one-time roughly $4,000–$12,000</strong> hardware or reserved-capacity line item if you outgrow API-only — not the multi-team figures in enterprise quotes.
   </div>
 
   <!-- PRODUCT 2 BUDGET -->
   <div class="section-title"><em class="icon">◈</em> Product 2 — AI Legal Assistant Platform: Project Budget</div>
   <div class="callout info" style="margin-bottom: 24px;">
     <strong>Estimation Basis</strong>
-    Product 2 is a significantly larger engagement — multi-role platform, agentic pipeline, lawyer workflow, real-time case management, and a knowledge graph. Estimates assume a team of 7–8 people across phases. All figures are in USD.
+    Same solo-developer model as Product 1 — one builder covering architecture, backend, frontend, AI agents, and light DevOps, at ~35–40 billable hours per week. Scope is a <strong>lean MVP</strong> of the multi-role platform (happy-path flows, one region, pragmatic security), not a full enterprise programme. Calendar target: <strong>12–14 weeks</strong>. All figures are in USD.
   </div>
   <table class="arch-table" style="margin-bottom: 20px;">
     <thead><tr><th>Phase</th><th>Duration</th><th>Key Activities</th><th>Roles Engaged</th><th>Estimated Cost (USD)</th></tr></thead>
     <tbody>
-      <tr><td><strong>Phase 1</strong><br>Discovery & Architecture</td><td>3 weeks</td><td>Full requirements (client, lawyer, admin roles), LLM deployment decision, multi-tenancy design, agentic pipeline architecture (LangGraph graph design), SLA and notification framework design, data governance planning</td><td>Solution Architect, AI/ML Engineer, Legal Consultant, PM</td><td>$26,000 – $34,000</td></tr>
-      <tr><td><strong>Phase 2</strong><br>Data & Knowledge Foundation</td><td>4 weeks</td><td>Legal knowledge graph (Neo4j) construction, statute and case law corpus ingestion, Weaviate setup, voyage-law-2 embedding pipeline, Graph-RAG traversal implementation, knowledge base admin tooling</td><td>Knowledge Graph Engineer ×2, AI/ML Engineer, Legal Consultant, Backend Engineer</td><td>$44,000 – $58,000</td></tr>
-      <tr><td><strong>Phase 3</strong><br>Agentic AI Pipeline</td><td>5 weeks</td><td>LangGraph agent graph (Triage → Research → Drafting → Review nodes), stateful session management, human-in-the-loop checkpoints, Cohere Rerank integration, citation-grounded draft generation, agent evaluation and hallucination testing</td><td>AI/ML Engineer ×2, Knowledge Graph Engineer, Legal Consultant (QA), Backend Engineer</td><td>$56,000 – $74,000</td></tr>
-      <tr><td><strong>Phase 4</strong><br>Case Management Backend</td><td>4 weeks</td><td>Case lifecycle API (FastAPI + Django), case routing logic, SLA tracking engine, notification service (email/SMS/push), Redis + Celery async job queue, PostgreSQL schema, row-level multi-tenancy security</td><td>Backend Engineer ×2, DevOps Engineer, Solution Architect</td><td>$38,000 – $50,000</td></tr>
-      <tr><td><strong>Phase 5</strong><br>Frontend — Client Portal & Lawyer Dashboard</td><td>5 weeks</td><td>React client portal (intake form, document upload, case tracking), React lawyer dashboard (case queue, AI draft editor with track-changes, research assistant, analytics), React Native mobile wrapper, WebSocket real-time updates</td><td>Frontend Engineer ×2, Backend Engineer, DevOps Engineer</td><td>$46,000 – $60,000</td></tr>
-      <tr><td><strong>Phase 6</strong><br>Security, Testing & Deployment</td><td>3 weeks</td><td>End-to-end security audit, RBAC enforcement, GDPR compliance review, attorney-client privilege safeguards, full LLM output evaluation suite, UAT with lawyer users, Kubernetes deployment (EKS/AKS), monitoring, alerting, runbook documentation</td><td>DevOps Engineer, QA Engineer ×2, Solution Architect, Legal Consultant</td><td>$30,000 – $40,000</td></tr>
+      <tr><td><strong>Phase 1</strong><br>Discovery & Architecture</td><td>1.5 weeks</td><td>Role + journey map (client / lawyer / admin), LLM placement choice, tenancy sketch, LangGraph outline, notification + SLA skeleton</td><td>Solo developer — architect / PM / AI</td><td>$3,600 – $4,200</td></tr>
+      <tr><td><strong>Phase 2</strong><br>Data & Knowledge Foundation</td><td>2 weeks</td><td>Neo4j + Weaviate baseline, starter corpus ingest, voyage-law-2 pipeline, thin admin for KB refresh</td><td>Solo developer — KG + backend + AI</td><td>$4,800 – $5,400</td></tr>
+      <tr><td><strong>Phase 3</strong><br>Agentic AI Pipeline</td><td>3 weeks</td><td>LangGraph triage → research → draft graph, HIL stub, rerank + citations wired for one vertical slice</td><td>Solo developer — AI / ML + backend</td><td>$6,400 – $6,900</td></tr>
+      <tr><td><strong>Phase 4</strong><br>Case Management Backend</td><td>2 weeks</td><td>Case + user models, router + SLA timers, Celery/Redis jobs, email notifications, Postgres RLS first pass</td><td>Solo developer — backend + DevOps</td><td>$4,900 – $5,500</td></tr>
+      <tr><td><strong>Phase 5</strong><br>Frontend — Portals</td><td>2.5 weeks</td><td>Client intake + status UI, lawyer queue + draft review shell, basic WebSocket or polling — web-first (mobile wrapper deferred optional)</td><td>Solo developer — frontend + backend</td><td>$5,400 – $5,900</td></tr>
+      <tr><td><strong>Phase 6</strong><br>Security, Testing & Deployment</td><td>1.5 weeks</td><td>Secrets, RBAC pass, GDPR-minded defaults, smoke tests + targeted LLM eval, Docker deploy to single cluster / PaaS</td><td>Solo developer — DevOps + QA + AI</td><td>$3,700 – $4,100</td></tr>
     </tbody>
   </table>
   <div style="background:var(--navy);color:#fff;padding:20px 28px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
     <div>
       <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:4px;">PRODUCT 2 — TOTAL PROJECT INVESTMENT</div>
-      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;">$240,000 – $316,000</div>
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;">$28,000 – $32,000</div>
     </div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.6);max-width:360px;line-height:1.6;">Covers full platform delivery across 24 weeks. Excludes ongoing LLM API costs, cloud infrastructure (~$2,500–$5,000/month), and lawyer network recruitment costs.</div>
-  </div>
-  <div class="callout warn" style="margin-bottom: 56px;">
-    <strong>LLM API vs. Private SLM Cost Impact</strong>
-    Public LLM API adds estimated $800–$3,000/month recurring cost depending on case volume. Private SLM adds $25,000–$45,000 one-time GPU infrastructure cost (included as an optional add-on to Phase 3), but eliminates all per-token charges and is the recommended choice for a platform handling privileged legal communications.
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);max-width:360px;line-height:1.6;">Solo-build lean MVP across <strong>12–14 weeks</strong> (~$30K midpoint). Excludes token/API usage, hosting (scales with traffic), and any external lawyer-network fees.</div>
   </div>
 
   <!-- MAINTENANCE RATE CARD -->
   <div class="section-title"><em class="icon">◈</em> Ongoing Maintenance & Legal Content Updates</div>
   <div class="overview-box" style="margin-bottom: 32px;">
     <h3>Why Maintenance Is Non-Negotiable for Legal AI</h3>
-    <p>Law is not static. Statutes are amended, case law evolves, regulatory requirements change, and new document types emerge. A legal AI product that is not actively maintained becomes unreliable — and in the legal domain, unreliable means liability. The maintenance contract covers both technical upkeep and legal knowledge base currency.</p>
+    <p>Law is not static. Statutes are amended, case law evolves, regulatory requirements change, and new document types emerge. A legal AI product that is not actively maintained becomes unreliable — and in the legal domain, unreliable means liability. Post-launch work is billed <strong>by the hour</strong> at the role rates above — no standing monthly retainer is required.</p>
   </div>
   <table class="arch-table mb-56">
-    <thead><tr><th>Maintenance Activity</th><th>Frequency</th><th>Roles</th><th>Est. Monthly Hours</th><th>Est. Monthly Cost (USD)</th></tr></thead>
+    <thead><tr><th>Maintenance Activity</th><th>Frequency</th><th>Roles (billed per rate card above)</th></tr></thead>
     <tbody>
-      <tr><td>Legal Knowledge Graph Updates<br><span style="font-size:12px;color:var(--muted);">Statute amendments, new case law, updated templates</span></td><td>Monthly</td><td>Legal Consultant + Knowledge Graph Engineer</td><td>20 – 30 hrs</td><td>$2,400 – $3,900</td></tr>
-      <tr><td>LLM Pipeline Re-evaluation<br><span style="font-size:12px;color:var(--muted);">Prompt tuning as new model versions release, hallucination rate monitoring</span></td><td>Quarterly</td><td>AI/ML Engineer</td><td>12 – 20 hrs/quarter</td><td>$400 – $700/month avg</td></tr>
-      <tr><td>Security Patches & Dependency Updates<br><span style="font-size:12px;color:var(--muted);">Framework updates, CVE patches, library upgrades</span></td><td>Monthly</td><td>DevOps + Backend Engineer</td><td>8 – 12 hrs</td><td>$680 – $1,260</td></tr>
-      <tr><td>New Jurisdiction / Document Type Onboarding<br><span style="font-size:12px;color:var(--muted);">Expanding the template corpus to new states, countries, or document categories</span></td><td>On-demand</td><td>Legal Consultant + Knowledge Graph Engineer + AI/ML Engineer</td><td>Per-request scoped</td><td>$4,000 – $9,000 per expansion</td></tr>
-      <tr><td>Feature Enhancements & Bug Fixes</td><td>Ongoing (sprint-based)</td><td>Backend + Frontend + AI/ML Engineer</td><td>20 – 40 hrs</td><td>$1,800 – $4,200</td></tr>
-      <tr><td>SLA Monitoring, Uptime & Incident Response</td><td>Always-on</td><td>DevOps Engineer (on-call)</td><td>Retainer-based</td><td>$1,200 – $1,800/month</td></tr>
+      <tr><td>Legal Knowledge Graph Updates<br><span style="font-size:12px;color:var(--muted);">Statute amendments, new case law, updated templates</span></td><td>Monthly</td><td>Legal Domain Consultant + Knowledge Graph Engineer rates</td></tr>
+      <tr><td>LLM Pipeline Re-evaluation<br><span style="font-size:12px;color:var(--muted);">Prompt tuning as new model versions release, hallucination rate monitoring</span></td><td>Quarterly</td><td>AI / ML Engineer rate</td></tr>
+      <tr><td>Security Patches & Dependency Updates<br><span style="font-size:12px;color:var(--muted);">Framework updates, CVE patches, library upgrades</span></td><td>Monthly</td><td>DevOps + Backend Engineer rates</td></tr>
+      <tr><td>New Jurisdiction / Document Type Onboarding<br><span style="font-size:12px;color:var(--muted);">Expanding the template corpus to new states, countries, or document categories</span></td><td>On-demand</td><td>Legal Consultant + Knowledge Graph + AI/ML as needed</td></tr>
+      <tr><td>Feature Enhancements & Bug Fixes</td><td>As needed</td><td>Backend + Frontend + AI/ML Engineer rates</td></tr>
     </tbody>
   </table>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--rule);margin-bottom: 56px;">
-    <div style="background:#fff;padding:32px 28px;border-top:4px solid var(--steel);">
-      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--steel);margin-bottom:8px;">PRODUCT 1 — MAINTENANCE</div>
-      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:12px;">$6,500 – $9,500 / month</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.65;">Covers knowledge graph updates (primary cost driver given monthly statute/template refresh), security maintenance, LLM pipeline monitoring, and basic feature work. Lower legal content overhead than Product 2 due to simpler template-comparison scope.</p>
-    </div>
-    <div style="background:#fff;padding:32px 28px;border-top:4px solid var(--sage);">
-      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--sage);margin-bottom:8px;">PRODUCT 2 — MAINTENANCE</div>
-      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:12px;">$12,000 – $18,000 / month</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.65;">Higher maintenance cost reflecting: broader legal knowledge base (multi-jurisdiction, multi-issue-type), multi-agent pipeline monitoring, lawyer dashboard feature iteration, SLA uptime SLAs, and the larger surface area of a full client-facing platform. Legal content updates are the largest recurring line item.</p>
-    </div>
-  </div>
-
   <div class="callout limit">
     <strong>Important Caveat on All Estimates</strong>
-    All budget figures are indicative estimates based on standard market rates for a US-based legal AI engagement as of 2026. Final pricing is subject to detailed scope confirmation, LLM deployment choice (Public API vs Private SLM), team composition, and timeline. A fixed-price or time-and-materials contract structure can be discussed based on client preference.
+    All budget figures are indicative for a <strong>solo-principal build</strong> as of 2026. Final pricing depends on confirmed scope, LLM deployment choice (Public API vs Private SLM), and actual hours logged against the rate card. Maintenance above is <strong>time-and-materials only</strong> — no bundled monthly retainer is implied.
   </div>
 
 </div>
