@@ -520,11 +520,196 @@
   .mb-56 { margin-bottom: 56px; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
+  /* Mobile / narrow viewports only — desktop (769px+) keeps base styles above */
   @media (max-width: 768px) {
-    .doc-section { padding: 60px 24px; }
-    .roles-grid, .grid-2, .compare-grid { grid-template-columns: 1fr; }
-    .topnav { padding: 0 24px; }
-    .topnav-links { gap: 16px; }
+    html {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    body {
+      font-size: 14px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .cover {
+      min-height: 100svh;
+      padding: 40px max(20px, env(safe-area-inset-left)) 48px max(20px, env(safe-area-inset-right));
+    }
+    .cover-badge {
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 6px 14px;
+      margin-bottom: 32px;
+    }
+    .cover-sub {
+      font-size: 15px;
+    }
+    .cover-rule {
+      margin: 28px auto;
+    }
+    .cover-nav {
+      margin-top: 40px;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      max-width: 22rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cover-nav a {
+      width: 100%;
+      text-align: center;
+      padding: 14px 20px;
+    }
+
+    .topnav {
+      height: auto;
+      min-height: 52px;
+      padding: 10px max(12px, env(safe-area-inset-left)) 10px max(12px, env(safe-area-inset-right));
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .topnav-brand {
+      flex-shrink: 0;
+    }
+    .topnav-links {
+      flex: 1;
+      min-width: 0;
+      gap: 0 18px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      flex-wrap: nowrap;
+      justify-content: flex-end;
+      padding: 4px 0 6px;
+      scrollbar-width: thin;
+    }
+    .topnav-links a {
+      flex-shrink: 0;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    .doc-section {
+      padding: 48px max(16px, env(safe-area-inset-left)) 56px max(16px, env(safe-area-inset-right));
+    }
+    .doc-header {
+      padding-left: 18px;
+      margin-bottom: 48px;
+    }
+    .section-divider {
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-left: max(16px, env(safe-area-inset-left, 0px));
+      margin-right: max(16px, env(safe-area-inset-right, 0px));
+    }
+
+    .overview-box {
+      padding: 28px 20px;
+    }
+
+    .section-title {
+      font-size: 19px;
+    }
+
+    .cards-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .card {
+      padding: 22px 18px;
+    }
+
+    .flow-step {
+      grid-template-columns: 40px 1fr;
+      gap: 0 14px;
+    }
+    .flow-step:not(:last-child) .step-line {
+      left: 19px;
+    }
+    .step-num {
+      width: 40px;
+      height: 40px;
+      font-size: 14px;
+    }
+    .step-body {
+      padding: 4px 0 32px;
+    }
+
+    .roles-grid,
+    .grid-2,
+    .compare-grid {
+      grid-template-columns: 1fr;
+    }
+    .compare-col {
+      padding: 28px 20px;
+    }
+    .compare-grid {
+      margin-bottom: 56px;
+    }
+
+    .arch-diagram {
+      padding: 24px 14px;
+    }
+    .arch-node {
+      min-width: 0;
+      flex: 1 1 8rem;
+      max-width: 100%;
+      padding: 12px 14px;
+    }
+    .arch-row {
+      gap: 10px;
+    }
+
+    .arch-table {
+      font-size: 12px;
+      width: max(100%, 32rem);
+      max-width: none;
+    }
+    .arch-table th,
+    .arch-table td {
+      padding: 10px 12px;
+      vertical-align: top;
+    }
+    .arch-table td:first-child {
+      white-space: normal;
+      word-break: break-word;
+    }
+    .arch-table td code {
+      font-size: 11px;
+      word-break: break-word;
+    }
+
+    .callout {
+      padding: 16px 18px;
+      font-size: 13px;
+    }
+
+    .role-card {
+      padding: 22px 18px;
+    }
+
+    .tags {
+      gap: 6px;
+      margin-bottom: 40px;
+    }
+    .tag {
+      font-size: 10px;
+      padding: 5px 10px;
+    }
+
+    footer {
+      padding: 36px max(16px, env(safe-area-inset-left)) 40px max(16px, env(safe-area-inset-right));
+      font-size: 12px;
+    }
+
+    /* Inline two-column maintenance blocks — stack on narrow screens */
+    #budget .doc-section > div[style*="grid-template-columns:1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
   }
 </style>
 </head>
